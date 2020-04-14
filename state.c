@@ -18,7 +18,7 @@ void PrintState(unsigned *arr, unsigned puzzle_size) {
         for (int j = 0; j < puzzle_size; j++) {
             // 0 = blank tile, don't print it
             if (arr[i * puzzle_size + j] == 0) {
-                printf(" \t", arr[i * puzzle_size + j]);
+                printf(" \t");
             }
             else {
                 printf("%d\t", arr[i * puzzle_size + j]);
