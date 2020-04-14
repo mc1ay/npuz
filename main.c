@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     bool verbose = false;   
     bool debug = false;
     unsigned seed = 1;
-    unsigned scramble_size = 10 * puzzle_size * puzzle_size;
+    unsigned scramble_size = 0;
 
     // get command line switches
     int c;
@@ -68,6 +68,17 @@ int main(int argc, char **argv) {
             abort ();
     }
 
+     // calculate n from puzzle size to make parameter passing easier
+    signed n = puzzle_size * puzzle_size;   
+
+    // allocate row-major array for initial state
+    unsigned arr[n];
+
+    // set scramble_size default if switch wasn't used
+    if (scramble_size == 0) {
+        scramble_size = 10 * n;
+    }
+
     // if verbose is set, print out program options/defaults
     if (verbose) {
         printf("Program Options/Defaults: \n");
@@ -83,12 +94,6 @@ int main(int argc, char **argv) {
         printf("Scramble size: %d\n", scramble_size);
         printf("Seed: %d\n", seed);
     }
-
-    // calculate n from puzzle size to make parameter passing easier
-    signed n = puzzle_size * puzzle_size;   
-
-    // allocate row-major array for initial state
-    unsigned arr[n];
  
     // seed random number generator
     srand(seed);
