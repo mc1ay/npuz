@@ -5,6 +5,7 @@
  * @date    4/9/2020
 **/
 
+#include <CL/cl.h>
 #include <ctype.h>
 #include <stdbool.h> 
 #include <stdio.h>
@@ -14,6 +15,7 @@
 #include <time.h>
 #include "state.h"
 #include "node.h"
+#include "clsupport.h"
 
 #define MAX_SOURCE_SIZE (0x10000)
 
@@ -94,7 +96,13 @@ int main(int argc, char **argv) {
         printf("Scramble size: %d\n", scramble_size);
         printf("Seed: %d\n", seed);
     }
- 
+
+    // if verbose is set, print out OpenCL device info
+    if (verbose) {
+        printf("OpenCL device(s):\n");
+        print_cl_devices();
+    }
+
     // seed random number generator
     srand(seed);
 
