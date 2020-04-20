@@ -24,10 +24,11 @@ struct Node {
     int level; 
 
     // row-major representation of puzzle grid state 
-    unsigned arr[0]; 
+    unsigned arr[]; 
 };
 
 int calculateCost(unsigned*, unsigned*, unsigned);
 struct Node *newNode(struct Node*, unsigned*, unsigned, unsigned, unsigned, int, struct Node*); 
+void printNodeInfo(struct Node*, unsigned);
 
 #endif

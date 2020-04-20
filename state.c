@@ -144,17 +144,24 @@ bool CheckValidMove(unsigned puzzle_size, unsigned blank_position, unsigned dire
     return valid;
 }
 
-void GenerateInitialState(unsigned *arr, unsigned puzzle_size, unsigned scramble_size, bool verbose, bool debug) {
+unsigned GenerateInitialState(unsigned *arr, 
+                          unsigned *arr_final, 
+                          unsigned puzzle_size, 
+                          unsigned scramble_size, 
+                          bool verbose, 
+                          bool debug) {
     // store grid size of size^2 in variable n to make code cleaner
     unsigned n = puzzle_size * puzzle_size;
 
-    // set grid state to final state before scrambling
+    // set grid state to final state before scrambling and set up final state
     for (int i = 0; i < n - 1; i++) {
         arr[i] = i + 1;
+        arr_final[i] = i + 1;
     }
    
     // set blank tile
     arr[n - 1] = 0;
+    arr_final[n - 1] = 0;
 
     // set blank tile position
     unsigned blank_position = n - 1;
@@ -186,4 +193,6 @@ void GenerateInitialState(unsigned *arr, unsigned puzzle_size, unsigned scramble
             PrintState(arr, puzzle_size);
         }
     }
+
+    return blank_position;
 }

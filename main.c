@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <unistd.h>
 #include <time.h>
 #include "state.h"
@@ -73,8 +74,9 @@ int main(int argc, char **argv) {
      // calculate n from puzzle size to make parameter passing easier
     signed n = puzzle_size * puzzle_size;   
 
-    // allocate row-major array for initial state
+    // allocate row-major array for initial state and final state
     unsigned arr[n];
+    unsigned arr_final[n];
 
     // set scramble_size default if switch wasn't used
     if (scramble_size == 0) {
@@ -113,11 +115,28 @@ int main(int argc, char **argv) {
     if (verbose) {
         printf("Generating initial state\n");
     }
-    GenerateInitialState(arr, puzzle_size, scramble_size, verbose, debug);
+    unsigned blank_position = GenerateInitialState(arr, arr_final, puzzle_size, scramble_size, verbose, debug);
 
     if (verbose) {
         printf("Initial state: \n");
         PrintState(arr, puzzle_size);
+    }
+
+    // store Initial State as root node
+    if (verbose) {
+        printf("Storing Initial state as root node\n");
+    }
+    struct Node *root = malloc( sizeof(*root) + sizeof(unsigned) * puzzle_size * puzzle_size); 
+    root -> parent = NULL;
+    root -> blank_position = blank_position;
+    root -> cost = calculateCost(arr, arr_final, puzzle_size);
+    root -> level = 0;
+    memcpy(root->arr, arr, sizeof arr); 
+
+    if (verbose) {
+        printf("Root node info:\n");
+        printNodeInfo(root, puzzle_size);
+        printf("\n");
     }
     
     if (verbose) {

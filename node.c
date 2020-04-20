@@ -7,6 +7,7 @@
 **/
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
@@ -36,7 +37,7 @@ struct Node *newNode(struct Node *node, unsigned *arr, unsigned puzzle_size, uns
     node->parent = parent; 
   
     // copy puzzle grid from parent node to current node 
-    memcpy(node->arr, arr, sizeof node->arr); 
+    memcpy(node->arr, arr, sizeof arr); 
   
     // set number of misplaced tiles 
     node->cost = INT_MAX; 
@@ -49,3 +50,12 @@ struct Node *newNode(struct Node *node, unsigned *arr, unsigned puzzle_size, uns
   
     return node; 
 } 
+
+void printNodeInfo(struct Node *node, unsigned puzzle_size) {
+    printf("Node address: %p\n", node);
+    printf("Parent node: %p\n", node->parent);
+    printf("Memory usage: %lu\n", sizeof(*node) + sizeof(unsigned) * puzzle_size * puzzle_size);
+    printf("Cost: %d\n", node->cost);
+    printf("Level: %d\n", node->level);
+    printf("Blank Position: %d\n", node->blank_position);
+}
