@@ -15,8 +15,8 @@ struct Element {
     struct Element* next;
 };
 
-void push(struct Node, struct Element**);
-void pop(struct Element**);
-void top(struct Element*);
+void push(struct Node*, struct Element**, bool debug);
+void pop(struct Element**, bool debug);
+void top(struct Element*, unsigned, bool debug);
 
 #endif

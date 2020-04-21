@@ -5,19 +5,25 @@
  * @date    4/18/2020
 **/
 
+#include <stdbool.h>
 #include "node.h"
 #include "stack.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-void push(struct Node node, struct Element** stack) {
+void push(struct Node *node, struct Element** stack, bool debug) {
     struct Element* element = (struct Element*)malloc(sizeof(struct Element));
-    element -> node = node;
+    if (debug) {
+        printf("Pushing node: %p\n", node);
+        printf("Top of stack: %p\n", element);
+        printf("Next element: %p\n\n", *stack);
+    }
+    element -> node = *node;
     element -> next = *stack;
     (*stack) = element;
 }
 
-void pop(struct Element** stack) {
+void pop(struct Element** stack, bool debug) {
     if (*stack != NULL) {
         printf("Element popped\n");
         struct Element* tempPtr = *stack;
@@ -26,9 +32,11 @@ void pop(struct Element** stack) {
     }
 }
 
-void top(struct Element* stack) {
+void top(struct Element* stack, unsigned puzzle_size, bool debug) {
     if (stack != NULL) {
-        printf("Element on top of stack (add code for this later)\n");
+        struct Node node = stack -> node;
+        printf("Top element is: \n");
+        printNodeInfo(&node, puzzle_size);
     }
     else {
         printf("The stack is empty\n");

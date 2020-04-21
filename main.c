@@ -17,6 +17,7 @@
 #include "state.h"
 #include "node.h"
 #include "clsupport.h"
+#include "stack.h"
 
 #define MAX_SOURCE_SIZE (0x10000)
 
@@ -137,6 +138,25 @@ int main(int argc, char **argv) {
         printf("Root node info:\n");
         printNodeInfo(root, puzzle_size);
         printf("\n");
+    }
+
+    // make stack and push root node onto it
+    struct Element* stack_root = (struct Element*)malloc(sizeof(struct Element));
+    stack_root -> node = *root;
+    stack_root -> next = NULL;
+
+    // test code to check stack/node functionality
+    if (debug) {
+        printf("Pushing root node onto stack\n\n");
+        push(root, &stack_root, debug);
+        push(root, &stack_root, debug);
+        top(stack_root, puzzle_size, debug);
+        pop(&stack_root, debug);
+        top(stack_root, puzzle_size, debug);
+        pop(&stack_root, debug);
+        top(stack_root, puzzle_size, debug);
+        pop(&stack_root, debug);
+        top(stack_root, puzzle_size, debug);
     }
     
     if (verbose) {

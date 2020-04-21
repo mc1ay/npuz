@@ -51,7 +51,7 @@ struct Node *newNode(struct Node *node, unsigned *arr, unsigned puzzle_size, uns
     return node; 
 } 
 
-void printNodeInfo(struct Node *node, unsigned puzzle_size) {
+void printNodeInfo(struct Node* node, unsigned puzzle_size) {
     printf("Node address: %p\n", node);
     printf("Parent node: %p\n", node->parent);
     printf("Memory usage: %lu\n", sizeof(*node) + sizeof(unsigned) * puzzle_size * puzzle_size);
