@@ -11,7 +11,7 @@
 
 void PrintState(unsigned*, unsigned);
 bool CheckValidMove(unsigned, unsigned, unsigned);
-unsigned MoveBlank(unsigned*, unsigned, unsigned, unsigned);
+unsigned MoveBlank(unsigned*, unsigned, unsigned, unsigned, bool);
 unsigned GenerateInitialState(unsigned*, unsigned*, unsigned, unsigned, bool, bool);
 
 #endif

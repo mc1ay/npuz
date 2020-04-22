@@ -30,14 +30,16 @@ int calculateCost(unsigned* initial, unsigned* final, unsigned puzzle_size) {
 } 
 
 struct Node *newNode(struct Node *node, unsigned *arr, unsigned puzzle_size, unsigned direction,
-              unsigned blank_position, int level, struct Node *parent) {
-    node = malloc(sizeof(*node) + sizeof(unsigned) * puzzle_size * puzzle_size); 
+              unsigned old_blank_position, int level, struct Node *parent, bool debug) {
+    node = (struct Node*) malloc(sizeof(struct Node) + sizeof(unsigned) * puzzle_size * puzzle_size); 
+    //*structP = (struct flexArrayStruct *) malloc(sizeof(struct flexArrayStruct)+ sizeof(int) * array_size);
   
     // set pointer for path to root 
     node->parent = parent; 
   
     // copy puzzle grid from parent node to current node 
-    memcpy(node->arr, arr, sizeof arr); 
+    //node->arr = malloc(sizeof *(node->arr) * puzzle_size * puzzle_size);
+    memcpy(node->arr, arr, sizeof(unsigned) * puzzle_size * puzzle_size); 
   
     // set number of misplaced tiles 
     node->cost = INT_MAX; 
@@ -46,7 +48,7 @@ struct Node *newNode(struct Node *node, unsigned *arr, unsigned puzzle_size, uns
     node->level = level; 
   
     // update blank tile location 
-    node->blank_position = MoveBlank(arr, puzzle_size, blank_position, direction);  
+    node->blank_position = MoveBlank(node->arr, puzzle_size, old_blank_position, direction, debug);  
   
     return node; 
 } 
@@ -58,4 +60,9 @@ void printNodeInfo(struct Node* node, unsigned puzzle_size) {
     printf("Cost: %d\n", node->cost);
     printf("Level: %d\n", node->level);
     printf("Blank Position: %d\n", node->blank_position);
+    printf("Puzzle state: ");
+    for (int i = 0; i < puzzle_size * puzzle_size; i++) {
+        printf("%d ", node->arr[i]);
+    }
+    printf("\n");
 }

@@ -28,7 +28,7 @@ struct Node {
 };
 
 int calculateCost(unsigned*, unsigned*, unsigned);
-struct Node *newNode(struct Node*, unsigned*, unsigned, unsigned, unsigned, int, struct Node*); 
+struct Node *newNode(struct Node*, unsigned*, unsigned, unsigned, unsigned, int, struct Node*, bool); 
 void printNodeInfo(struct Node*, unsigned);
 
 #endif

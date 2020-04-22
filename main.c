@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
     if (verbose) {
         printf("Storing Initial state as root node\n");
     }
-    struct Node *root = malloc( sizeof(*root) + sizeof(unsigned) * puzzle_size * puzzle_size); 
+    struct Node *root = (struct Node*) malloc(sizeof(struct Node) + sizeof(unsigned) * puzzle_size * puzzle_size); 
     root -> parent = NULL;
     root -> blank_position = blank_position;
     root -> cost = calculateCost(arr, arr_final, puzzle_size);
@@ -145,11 +145,28 @@ int main(int argc, char **argv) {
     stack_root -> node = *root;
     stack_root -> next = NULL;
 
+    // generate next level of valid nodes and push them onto the stack
+    // this is for testing and should be removed later
+    for (int i = 0; i < 4; i++) {
+        if (CheckValidMove(puzzle_size, blank_position, i) == true) {
+            struct Node *new_node = 
+                        newNode(new_node, arr, puzzle_size, i, blank_position, 1, root, debug);
+            new_node->cost = calculateCost(new_node->arr, arr_final, puzzle_size);
+
+            if (verbose) {
+                printf("next node info: (moved %d)\n", i);
+                printNodeInfo(new_node, puzzle_size);
+                PrintState(new_node->arr, puzzle_size);
+                printf("\n");
+                if (debug) {
+                    printf("Pushing child node onto stack\n\n");
+                    push(new_node, &stack_root, debug);
+                }
+            }
+        }        
+    }
     // test code to check stack/node functionality
     if (debug) {
-        printf("Pushing root node onto stack\n\n");
-        push(root, &stack_root, debug);
-        push(root, &stack_root, debug);
         top(stack_root, puzzle_size, debug);
         pop(&stack_root, debug);
         top(stack_root, puzzle_size, debug);

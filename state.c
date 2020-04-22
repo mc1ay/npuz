@@ -28,7 +28,11 @@ void PrintState(unsigned *arr, unsigned puzzle_size) {
     }
 }
 
-unsigned MoveBlank(unsigned *arr, unsigned puzzle_size, unsigned blank_position, unsigned direction) {
+unsigned MoveBlank(unsigned *arr, 
+                   unsigned puzzle_size, 
+                   unsigned blank_position, 
+                   unsigned direction,
+                   bool debug) {
     // move blank specified direction, and move correct tile into its place
     // 0 - Up
     // 1 - Down
@@ -187,7 +191,7 @@ unsigned GenerateInitialState(unsigned *arr,
             direction = rand() % 4;
             valid_move = CheckValidMove(puzzle_size, blank_position, direction);
         } while (!valid_move);
-        blank_position = MoveBlank(arr, puzzle_size, blank_position, direction);
+        blank_position = MoveBlank(arr, puzzle_size, blank_position, direction, debug);
         if (debug) {
             printf("moving blank direction: %d\n", direction);
             PrintState(arr, puzzle_size);

@@ -15,8 +15,8 @@ void push(struct Node *node, struct Element** stack, bool debug) {
     struct Element* element = (struct Element*)malloc(sizeof(struct Element));
     if (debug) {
         printf("Pushing node: %p\n", node);
-        printf("Top of stack: %p\n", element);
-        printf("Next element: %p\n\n", *stack);
+        printf("Top of stack: %p\n", *stack);
+        printf("Next element: %p\n\n", element);
     }
     element -> node = *node;
     element -> next = *stack;
