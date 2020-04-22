@@ -11,12 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void push(struct Node *node, struct Element** stack, bool debug) {
+void push(struct Node** node, struct Element** stack, bool debug) {
     struct Element* element = (struct Element*)malloc(sizeof(struct Element));
     if (debug) {
-        printf("Pushing node: %p\n", node);
-        printf("Top of stack: %p\n", *stack);
-        printf("Next element: %p\n\n", element);
+        printf("Pushing node: %p\n", *node);        
     }
     element -> node = *node;
     element -> next = *stack;
@@ -34,9 +32,9 @@ void pop(struct Element** stack, bool debug) {
 
 void top(struct Element* stack, unsigned puzzle_size, bool debug) {
     if (stack != NULL) {
-        struct Node node = stack -> node;
+        struct Node* node = stack -> node;
         printf("Top element is: \n");
-        printNodeInfo(&node, puzzle_size);
+        printNodeInfo(node, puzzle_size);
     }
     else {
         printf("The stack is empty\n");

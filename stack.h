@@ -11,11 +11,11 @@
 #include "node.h"
 
 struct Element {
-    struct Node node;
+    struct Node *node;
     struct Element* next;
 };
 
-void push(struct Node*, struct Element**, bool debug);
+void push(struct Node**, struct Element**, bool debug);
 void pop(struct Element**, bool debug);
 void top(struct Element*, unsigned, bool debug);
 
