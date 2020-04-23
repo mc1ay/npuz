@@ -16,7 +16,8 @@ struct Element {
 };
 
 void push(struct Node**, struct Element**, bool debug);
-void pop(struct Element**, bool debug);
+struct Node* pop(struct Element**, bool debug);
 void top(struct Element*, unsigned, bool debug);
+bool StackEmpty (struct Element*);
 
 #endif

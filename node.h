@@ -23,6 +23,9 @@ struct Node {
     // number of moves from initial state to get here 
     int level; 
 
+    // direction blank moved to get here
+    int direction;
+
     // row-major representation of puzzle grid state 
     unsigned arr[]; 
 };

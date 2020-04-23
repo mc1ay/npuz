@@ -18,6 +18,7 @@
 #include "node.h"
 #include "clsupport.h"
 #include "stack.h"
+#include "solve.h"
 
 #define MAX_SOURCE_SIZE (0x10000)
 
@@ -134,48 +135,17 @@ int main(int argc, char **argv) {
     root -> level = 0;
     memcpy(root->arr, arr, sizeof arr); 
 
-    if (verbose) {
+    if (debug) {
         printf("Root node info:\n");
         printNodeInfo(root, puzzle_size);
         printf("\n");
     }
-
-    // make stack and push root node onto it
-    struct Element* stack_root = (struct Element*)malloc(sizeof(struct Element));
-    stack_root->node = root;
-    stack_root->next = NULL;
-
-    // generate next level of valid nodes and push them onto the stack
-    // this is for testing and should be removed later
-    for (int i = 0; i < 4; i++) {
-        if (CheckValidMove(puzzle_size, blank_position, i) == true) {
-            struct Node* new_node = 
-                        newNode(new_node, arr, puzzle_size, i, blank_position, 1, root, debug);
-            new_node->cost = calculateCost(new_node->arr, arr_final, puzzle_size);
-
-            if (verbose) {
-                printf("next node info: (moved %d)\n", i);
-                printNodeInfo(new_node, puzzle_size);
-                PrintState(new_node->arr, puzzle_size);
-                printf("\n");
-                if (debug) {
-                    printf("Pushing child node onto stack\n\n");
-                    push(&new_node, &stack_root, debug);
-                }
-            }
-        }        
-    }
-    // test code to check stack/node functionality
-    if (debug) {
-        top(stack_root, puzzle_size, debug);
-        pop(&stack_root, debug);
-        top(stack_root, puzzle_size, debug);
-        pop(&stack_root, debug);
-        top(stack_root, puzzle_size, debug);
-        pop(&stack_root, debug);
-        top(stack_root, puzzle_size, debug);
-    }
     
+    if (verbose) {
+        printf("Using brute force method\n\n");
+    }
+    BruteForce(root, arr_final, puzzle_size, verbose, debug);
+
     if (verbose) {
         printf("Done.\n");
     }

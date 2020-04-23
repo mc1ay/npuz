@@ -46,6 +46,9 @@ struct Node *newNode(struct Node *node, unsigned *arr, unsigned puzzle_size, uns
   
     // set number of moves so far 
     node->level = level; 
+
+    // set direction blank moved to get here
+    node->direction = direction;
   
     // update blank tile location 
     node->blank_position = MoveBlank(node->arr, puzzle_size, old_blank_position, direction, debug);  

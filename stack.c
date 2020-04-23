@@ -21,12 +21,16 @@ void push(struct Node** node, struct Element** stack, bool debug) {
     (*stack) = element;
 }
 
-void pop(struct Element** stack, bool debug) {
+struct Node* pop(struct Element** stack, bool debug) {
     if (*stack != NULL) {
-        printf("Element popped\n");
+        struct Node* node = (*stack) -> node;
+        if (debug) {
+            printf("Element popped\n");
+        }
         struct Element* tempPtr = *stack;
         *stack = (*stack) -> next;
         free(tempPtr);
+        return node;
     }
 }
 
@@ -39,4 +43,12 @@ void top(struct Element* stack, unsigned puzzle_size, bool debug) {
     else {
         printf("The stack is empty\n");
     }
+}
+
+bool StackEmpty (struct Element* stack) {
+    bool empty = true;
+    if (stack != NULL) {
+        empty = false;
+    }
+    return empty;
 }
