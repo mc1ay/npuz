@@ -129,10 +129,11 @@ int main(int argc, char **argv) {
         printf("Storing Initial state as root node\n");
     }
     struct Node* root = (struct Node*) malloc(sizeof(struct Node) + sizeof(unsigned) * puzzle_size * puzzle_size); 
-    root -> parent = NULL;
-    root -> blank_position = blank_position;
-    root -> cost = calculateCost(arr, arr_final, puzzle_size);
-    root -> level = 0;
+    root->parent = NULL;
+    root->blank_position = blank_position;
+    root->cost = calculateCost(arr, arr_final, puzzle_size);
+    root->level = 0;
+    root->direction = -1;
     memcpy(root->arr, arr, sizeof arr); 
 
     if (debug) {

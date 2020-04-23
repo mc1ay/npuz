@@ -38,6 +38,7 @@ void BruteForce(struct Node* root, unsigned* final, unsigned puzzle_size, bool v
                             temp_node,
                             debug);
                 new_node->cost = calculateCost(new_node->arr, final, puzzle_size);
+                /*
                 if (debug) {
                     if (i == 0) {
                         printf("Direction: Up ");
@@ -53,14 +54,45 @@ void BruteForce(struct Node* root, unsigned* final, unsigned puzzle_size, bool v
                     }
                     printf("Parent: %p Cost: %d Level: %d\n", new_node->parent, new_node->cost, new_node->level);
                 }
+                */
                 if (new_node->cost == 0) {
                     printf("Solution found!\n");
                     printf("Move sequence: ");
-                    // put code here to empty stack, then push each node from here to root into stack,
-                    // then pop off and print direction
+                    while (!StackEmpty(stack_root)) {
+                        pop(&stack_root, debug);
+                    }
+                    // push this node onto the clean stack
+                    temp_node = new_node;
+                    push(&temp_node, &stack_root, debug);
+                    // traverse the tree, pushing each parent into stack
+                    while (temp_node->parent != NULL) {
+                        temp_node = temp_node->parent;
+                        push(&temp_node, &stack_root, debug);
+                    }
+                    //now pop each node and print its direction
+                    while (!StackEmpty(stack_root)) {
+                        temp_node = pop(&stack_root, debug);
+                        if (verbose) {
+                            if (temp_node->direction == 0) {
+                                printf("U ");
+                            }
+                            else if (temp_node->direction == 1) {
+                                printf("D ");
+                            }
+                            else if (temp_node->direction == 2) {
+                                printf("L ");
+                            }
+                            else if (temp_node->direction == 3) {
+                                printf("R ");
+                            }
+                        }
+                    }
+                    if (verbose) {
+                        printf("\n");
+                    }                        
                     return;
                 }
-                if (new_node->level < 60) {
+                if (new_node->level < 20) {
                     push(&new_node, &stack_root, debug); 
                 }
             }
