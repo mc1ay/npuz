@@ -13,9 +13,6 @@
 
 void push(struct Node** node, struct Element** stack, bool debug) {
     struct Element* element = (struct Element*)malloc(sizeof(struct Element));
-    if (debug) {
-        printf("Pushing node: %p\n", *node);        
-    }
     element -> node = *node;
     element -> next = *stack;
     (*stack) = element;
@@ -24,9 +21,6 @@ void push(struct Node** node, struct Element** stack, bool debug) {
 struct Node* pop(struct Element** stack, bool debug) {
     if (*stack != NULL) {
         struct Node* node = (*stack) -> node;
-        if (debug) {
-            printf("Element popped\n");
-        }
         struct Element* tempPtr = *stack;
         *stack = (*stack) -> next;
         free(tempPtr);

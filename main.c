@@ -143,9 +143,9 @@ int main(int argc, char **argv) {
     }
     
     if (verbose) {
-        printf("Using brute force method\n\n");
+        printf("Attemping to solve puzzle\n\n");
     }
-    BruteForce(root, arr_final, puzzle_size, verbose, debug);
+    Solve(root, arr_final, puzzle_size, verbose, debug);
 
     if (verbose) {
         printf("Done.\n");

@@ -10,7 +10,9 @@
 #define solve_H
 
 #include "node.h"
+#include "stack.h"
 
-void BruteForce(struct Node*, unsigned*, unsigned, bool, bool);
+void Solve(struct Node*, unsigned*, unsigned, bool, bool);
+void PrintSolution(struct Node*, struct Node*, struct Element*, bool, bool);
 
 #endif
