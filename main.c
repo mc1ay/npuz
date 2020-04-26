@@ -135,6 +135,9 @@ int main(int argc, char **argv) {
     root->level = 0;
     root->direction = -1;
     memcpy(root->arr, arr, sizeof arr); 
+    for (int i = 0; i < 4; i++) {
+        root->children[i] = NULL;
+    }
 
     if (debug) {
         printf("Root node info:\n");
