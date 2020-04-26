@@ -26,6 +26,9 @@ struct Node {
     // direction blank moved to get here
     int direction;
 
+    // child nodes
+    struct Node* children[4];
+
     // row-major representation of puzzle grid state 
     unsigned arr[]; 
 };

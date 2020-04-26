@@ -16,25 +16,32 @@
 #include "stack.h"
 
 void Solve(struct Node* root, unsigned* final, unsigned puzzle_size, bool verbose, bool debug) {
-    int depth = 1;
-    int depth_limit = 20;
+    //int depth = root->cost;
+    int depth = root->cost;
+    int depth_limit = 100;
+    // temporary node
     struct Node* temp_node = NULL;
+    // temporary node for holding parent node
+    struct Node* parent_node = NULL;
+    // array for holding child node pointers for sorting before pushing into stack
+    struct Node* child_nodes[4];
 
     while (depth <= depth_limit) {
         if (debug) {
             printf("Using depth: %d\n", depth);
-            printf("Press a key\n");
-            char temp = fgetc(stdin);
+            //printf("Press a key\n");
+            //char temp = fgetc(stdin);
         }
         // make stack and push root onto it
         struct Element* stack_root = (struct Element*)malloc(sizeof(struct Element));
-        // made second stack to keep up with nodes that need to be deleted
-        struct Element* needs_freed = (struct Element*)malloc(sizeof(struct Element));
+        // made second stack to keep up with nodes that need to be checked for deletion
+        struct Element* stack_deletion = (struct Element*)malloc(sizeof(struct Element));
 
         stack_root->node = root;
         stack_root->next = NULL;
-        needs_freed->node = root;
-        needs_freed->next = NULL;
+
+        stack_deletion->node = root;
+        stack_deletion->next = NULL;
                 
         while (!StackEmpty(stack_root)) {
             temp_node = pop(&stack_root, debug);
@@ -50,32 +57,70 @@ void Solve(struct Node* root, unsigned* final, unsigned puzzle_size, bool verbos
                                 temp_node,
                                 debug);
                     new_node->cost = calculateCost(new_node->arr, final, puzzle_size);
-                    //printf("Made node: %p\n", newNode);
+                    temp_node->children[i] = new_node;
+                    
+                    child_nodes[i] = new_node;
 
                     if (new_node->cost == 0) {
                         PrintSolution(temp_node, new_node, stack_root, verbose, debug);
                         return;
                     }
-                    else if (new_node->level < depth) {
-                        push(&new_node, &stack_root, debug); 
-                    }
-                    else {
-                        free(new_node);
-                    }
+                }
+                else {
+                    child_nodes[i] = NULL;
                 }
             }
-            // push temp onto second stack to be freed
-            push(&temp_node, &needs_freed, debug);               
-        }
-        // free whatever we don't need
-        temp_node = pop(&needs_freed, debug);
-        while (!StackEmpty(needs_freed) && needs_freed->next != NULL) {
-                free(temp_node);
-                temp_node = pop(&needs_freed, debug);
+            // sort child nodes
+            for (int i = 0; i < 3; i++) {
+                for (int j = i + 1; j < 4; j++) {
+                    if (child_nodes[i] != NULL && child_nodes[j] != NULL) {
+                        if (child_nodes[i]->cost > child_nodes[j]->cost) {
+                            struct Node* temp = child_nodes[i];
+                            child_nodes[i] = child_nodes[j];
+                            child_nodes[j] = temp;
+                        }
+                    }
+                    else if (child_nodes[j] == NULL) {
+                        struct Node* temp = child_nodes[i];
+                        child_nodes[i] = child_nodes[j];
+                        child_nodes[j] = temp;
+                    }
+                  
+                }
+            }
+            
+            for (int i = 0; i < 4; i++) {
+                if (child_nodes[i] != NULL) {
+                    if (child_nodes[i]->level < depth) {
+                        push(&child_nodes[i], &stack_root, debug);
+                    }
+                    else {
+                        push(&child_nodes[i], &stack_deletion, debug);
+                        while (!StackEmpty(stack_deletion)) {
+                            int children_left = 0;
+                            temp_node = pop(&stack_deletion, debug);
+                            // check to see if last child of parent, if so push
+                            // parent onto stack
+                            if (temp_node->parent != NULL) {
+                                parent_node = temp_node->parent;
+                                parent_node->children[temp_node->direction] = NULL;
+                                free(temp_node);
+                                for (int n = 0; n < 4; n++) {
+                                    if (parent_node->children[n] != NULL) {
+                                        children_left++;
+                                    }
+                                }
+                                if (children_left == 0) {
+                                    push(&parent_node, &stack_deletion, debug);
+                                }
+                            }
+                        }                        
+                    }
+                }
+            }              
         }    
         free(stack_root);
-        free(needs_freed);
-        depth++;    
+        depth++;  
     }
 }
 
