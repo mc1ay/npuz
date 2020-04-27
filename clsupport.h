@@ -8,7 +8,11 @@
 #ifndef clsupport_H
 #define clsupport_H
 
+#include "node.h"
+#include <stdbool.h>
+
 void print_ret_status(int);
 int print_cl_devices();
+void CLSolve(struct Node*, unsigned*, unsigned, bool, bool);
 
 #endif

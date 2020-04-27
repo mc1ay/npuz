@@ -7,6 +7,11 @@
 
 #include <CL/cl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include "clsupport.h"
+
+#define MAX_SOURCE_SIZE (0x10000)
 
 // Function to print ret status from OpenCL functions
 void print_ret_status(int ret) {
@@ -85,3 +90,71 @@ int print_cl_devices() {
     return 0;
 }
 
+void CLSolve(struct Node* root, unsigned* final, unsigned puzzle_size, bool verbose, bool debug) {
+    cl_uint maxComputeUnits;
+    size_t maxWorkGroupSize;
+    cl_platform_id platform_id = NULL;
+    cl_device_id device_id = NULL;   
+    cl_uint ret_num_devices;
+    cl_uint ret_num_platforms;
+    
+    // Get platform and device information
+    printf("Getting platform and device information: ");
+    cl_int ret = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
+    ret = clGetDeviceIDs( platform_id, CL_DEVICE_TYPE_DEFAULT, 1, 
+            &device_id, &ret_num_devices);
+    print_ret_status(ret);
+    
+    FILE *fp;
+    char *source_str;
+    size_t source_size;
+    fp = fopen("solve.cl", "r");
+    if (!fp) {
+        fprintf(stderr, "Failed to load kernel.\n");
+        exit(1);
+    }
+    source_str = (char*)malloc(MAX_SOURCE_SIZE);
+    source_size = fread( source_str, 1, MAX_SOURCE_SIZE, fp);
+    fclose( fp );
+
+    // Get Max Compute Units
+    clGetDeviceInfo(device_id, CL_DEVICE_MAX_COMPUTE_UNITS,
+                    sizeof(maxComputeUnits), &maxComputeUnits, NULL);
+    printf("Parallel compute units: %d\n", maxComputeUnits);
+
+    // Get Max Workgroup Size
+    clGetDeviceInfo(device_id, CL_DEVICE_MAX_WORK_GROUP_SIZE,
+                    sizeof(maxWorkGroupSize), &maxWorkGroupSize, NULL);
+    printf("Max workgroup size: %lu\n", maxWorkGroupSize);
+
+    // Create an OpenCL context
+    printf("Creating context: "); 
+    cl_context context = clCreateContext( NULL, 1, &device_id, NULL, NULL, &ret);
+    print_ret_status(ret);
+
+    // Create a command queue
+    printf("Creating queue: ");
+    cl_command_queue command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
+    print_ret_status(ret);
+
+    // Create a program from the kernel source
+    printf("Creating program from source: ");
+    cl_program program = clCreateProgramWithSource(context, 1, 
+            (const char **)&source_str, (const size_t *)&source_size, &ret);
+    print_ret_status(ret);
+
+    // Build the program
+    printf("Building program: ");
+    ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
+    print_ret_status(ret);
+    if(ret != CL_SUCCESS)
+    {
+        size_t log_size;
+        clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+        char *buildLog = calloc(log_size, sizeof(char));
+        clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, log_size, buildLog, NULL);
+        buildLog[log_size]='\0';
+        printf("\nError in kernel BUILD PGM: %s\n ",buildLog);
+        return;
+    }
+}

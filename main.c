@@ -20,8 +20,6 @@
 #include "stack.h"
 #include "solve.h"
 
-#define MAX_SOURCE_SIZE (0x10000)
-
 int main(int argc, char **argv) {
     // initialization 
     // puzzle_size = square root of n
@@ -148,7 +146,18 @@ int main(int argc, char **argv) {
     if (verbose) {
         printf("Attemping to solve puzzle\n\n");
     }
+    // Solve with CPU
+    if (verbose) {
+        printf("CPU Solution:\n");
+    }
     Solve(root, arr_final, puzzle_size, verbose, debug);
+
+    // Solve with GPU
+    if (verbose) {
+        printf("GPU Solution:\n");
+        printf("Not yet implemented");
+    }
+    //CLSolve(root, arr_final, puzzle_size, verbose, debug);
 
     if (verbose) {
         printf("Done.\n");
