@@ -16,7 +16,6 @@
 #include "stack.h"
 
 void Solve(struct Node* root, unsigned* final, unsigned puzzle_size, bool verbose, bool debug) {
-    //int depth = root->cost;
     int depth = root->cost;
     int depth_limit = 100;
     // temporary node
@@ -27,10 +26,8 @@ void Solve(struct Node* root, unsigned* final, unsigned puzzle_size, bool verbos
     struct Node* child_nodes[4];
 
     while (depth <= depth_limit) {
-        if (debug) {
+        if (verbose) {
             printf("Using depth: %d\n", depth);
-            //printf("Press a key\n");
-            //char temp = fgetc(stdin);
         }
         // make stack and push root onto it
         struct Element* stack_root = (struct Element*)malloc(sizeof(struct Element));
