@@ -126,8 +126,10 @@ void PrintSolution(struct Node* temp_node,
                    struct Element* stack_root, 
                    bool verbose, 
                    bool debug) {
-    printf("Solution found!\n");
-    printf("Move sequence: ");
+    if (verbose) {
+        printf("Solution found!\n");
+        printf("Move sequence: ");
+    }
     while (!StackEmpty(stack_root)) {
         pop(&stack_root, debug);
     }

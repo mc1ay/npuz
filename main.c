@@ -32,13 +32,17 @@ int main(int argc, char **argv) {
     signed dimensions = 2;
     bool verbose = false;   
     bool debug = false;
+    bool use_opencl = false;
     unsigned seed = 1;
     unsigned scramble_size = 0;
 
     // get command line switches
     int c;
-    while ((c = getopt(argc, argv, "dvn:s:c:m:")) != -1)
+    while ((c = getopt(argc, argv, "odvn:s:c:m:")) != -1)
     switch (c) {
+        case 'o':
+            use_opencl = true;
+            break;
         case 'd':
             debug = true;
             break;
@@ -146,19 +150,24 @@ int main(int argc, char **argv) {
     if (verbose) {
         printf("Attemping to solve puzzle\n\n");
     }
-    // Solve with CPU
-    if (verbose) {
-        printf("CPU Solution:\n");
-    }
-    Solve(root, arr_final, puzzle_size, verbose, debug);
 
-    // Solve with GPU
-    if (verbose) {
-        printf("GPU Solution:\n");
-        printf("Not yet implemented");
-    }
-    //CLSolve(root, arr_final, puzzle_size, verbose, debug);
+    // Solve with GPU if using OpenCL option
+    if (use_opencl) {
+        if (verbose) {
+            printf("GPU Solution:\n");
+            printf("Not yet implemented\n");
+        }
+        CLSolve(root, arr_final, puzzle_size, verbose, debug);
 
+    }
+    // Solve with CPU if not using OpenCL
+    else {
+        if (verbose) {
+            printf("CPU Solution:\n");
+        }
+        Solve(root, arr_final, puzzle_size, verbose, debug);
+    }
+    
     if (verbose) {
         printf("Done.\n");
     }
