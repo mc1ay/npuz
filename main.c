@@ -134,7 +134,6 @@ int main(int argc, char **argv) {
     if (use_opencl) {
         if (verbose) {
             printf("GPU Solution:\n");
-            printf("Not yet implemented\n");
         }
         CLSolve(arr, arr_final, puzzle_size, blank_position, verbose, debug);
 

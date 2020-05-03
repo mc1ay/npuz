@@ -90,13 +90,21 @@ int print_cl_devices() {
     return 0;
 }
 
-void CLSolve(unsigned* initial_state, unsigned* final, unsigned puzzle_size, unsigned blank_position, bool verbose, bool debug) {
+void CLSolve(unsigned* initial_state, 
+             unsigned* final_state, 
+             unsigned puzzle_size, 
+             unsigned blank_position, 
+             bool verbose, 
+             bool debug) {
+    
     cl_uint maxComputeUnits;
     size_t maxWorkGroupSize;
     cl_platform_id platform_id = NULL;
     cl_device_id device_id = NULL;   
     cl_uint ret_num_devices;
     cl_uint ret_num_platforms;
+    size_t global_item_size = 1;
+    size_t local_item_size = 1;
     
     // Get platform and device information
     printf("Getting platform and device information: ");
@@ -137,6 +145,35 @@ void CLSolve(unsigned* initial_state, unsigned* final, unsigned puzzle_size, uns
     cl_command_queue command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
     print_ret_status(ret);
 
+    // Create memory buffers
+    cl_mem initial_state_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
+            sizeof(unsigned) * puzzle_size * puzzle_size , NULL, &ret);
+    cl_mem final_state_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
+            sizeof(unsigned) * puzzle_size * puzzle_size , NULL, &ret);
+    cl_mem puzzle_size_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE, 
+            sizeof(unsigned), NULL, &ret);
+    cl_mem blank_position_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE, 
+            sizeof(unsigned), NULL, &ret);
+
+    // Copy data to buffers
+    printf("Copying variables to buffers\n");
+    printf("- Initial State Array: ");
+    ret = clEnqueueWriteBuffer(command_queue, initial_state_mem_obj, CL_TRUE, 0, 
+            sizeof(unsigned) * puzzle_size * puzzle_size, initial_state, 0, NULL, NULL);
+    print_ret_status(ret);
+    printf("- Final State Array: ");
+    ret = clEnqueueWriteBuffer(command_queue, final_state_mem_obj, CL_TRUE, 0, 
+            sizeof(unsigned) * puzzle_size * puzzle_size, final_state, 0, NULL, NULL);
+    print_ret_status(ret);
+    printf("- Puzzle Size: ");
+    ret = clEnqueueWriteBuffer(command_queue, puzzle_size_mem_obj, CL_TRUE, 0, 
+            sizeof(unsigned), &puzzle_size, 0, NULL, NULL);
+    print_ret_status(ret);
+    printf("- Blank Position: ");
+    ret = clEnqueueWriteBuffer(command_queue, blank_position_mem_obj, CL_TRUE, 0, 
+    sizeof(unsigned), &blank_position, 0, NULL, NULL);
+    print_ret_status(ret);
+
     // Create a program from the kernel source
     printf("Creating program from source: ");
     cl_program program = clCreateProgramWithSource(context, 1, 
@@ -157,4 +194,31 @@ void CLSolve(unsigned* initial_state, unsigned* final, unsigned puzzle_size, uns
         printf("\nError in kernel BUILD PGM: %s\n ",buildLog);
         return;
     }
+
+    // Create the OpenCL kernel
+    printf("Creating OpenCL kernel: ");
+    cl_kernel kernel = clCreateKernel(program, "solve", &ret);
+    print_ret_status(ret);
+
+    // Set the arguments of the kernel
+    printf("Setting kernel arguments: \n");
+    ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&initial_state_mem_obj);
+    printf("1 - "); 
+    print_ret_status(ret);
+    ret = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&final_state_mem_obj);
+    printf("2 - ");
+    print_ret_status(ret);
+    ret = clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&puzzle_size_mem_obj);
+    printf("3 - ");
+    print_ret_status(ret);
+    ret = clSetKernelArg(kernel, 3, sizeof(cl_mem), (void *)&blank_position_mem_obj);
+    printf("4 - ");
+    print_ret_status(ret);
+
+    printf("Executing kernel: \n");
+    ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
+                &global_item_size, &local_item_size, 0, NULL, NULL);
+    printf("Execution: ");
+    print_ret_status(ret);
+
 }
