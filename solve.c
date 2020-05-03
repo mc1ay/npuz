@@ -9,14 +9,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include <limits.h>
 #include "solve.h"
 #include "state.h"
 #include "node.h"
 #include "stack.h"
 
-void Solve(struct Node* root, unsigned* final, unsigned puzzle_size, bool verbose, bool debug) {
-    int depth = root->cost;
+void Solve(unsigned* initial_state, unsigned* final, unsigned puzzle_size, unsigned blank_position, bool verbose, bool debug) {
     int depth_limit = 100;
     // temporary node
     struct Node* temp_node = NULL;
@@ -24,6 +24,8 @@ void Solve(struct Node* root, unsigned* final, unsigned puzzle_size, bool verbos
     struct Node* parent_node = NULL;
     // array for holding child node pointers for sorting before pushing into stack
     struct Node* child_nodes[4];
+    struct Node* root = MakeRootNode(initial_state, final, puzzle_size, blank_position, verbose, debug);
+    int depth = root->cost;
 
     while (depth <= depth_limit) {
         if (verbose) {
@@ -162,4 +164,30 @@ void PrintSolution(struct Node* temp_node,
     if (verbose) {
         printf("\n");
     }                        
+}
+
+struct Node* MakeRootNode(unsigned* arr, unsigned* arr_final, unsigned puzzle_size, unsigned blank_position, bool verbose, bool debug) {
+    // store Initial State as root node
+    if (verbose) {
+        printf("Storing Initial state as root node\n");    
+        printf("\n");
+    }
+    struct Node* root = (struct Node*) malloc(sizeof(struct Node) + sizeof(unsigned) * puzzle_size * puzzle_size); 
+    root->parent = NULL;
+    root->blank_position = blank_position;
+    root->cost = calculateCost(arr, arr_final, puzzle_size);
+    root->level = 0;
+    root->direction = -1;
+    memcpy(root->arr, arr, sizeof(unsigned) * puzzle_size * puzzle_size); 
+    for (int i = 0; i < 4; i++) {
+        root->children[i] = NULL;
+    }
+
+    if (debug) {
+        printf("Root node info:\n");
+        printNodeInfo(root, puzzle_size);
+        printf("\n");
+    }
+
+    return root;
 }

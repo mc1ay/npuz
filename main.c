@@ -125,27 +125,6 @@ int main(int argc, char **argv) {
         printf("Initial state: \n");
         PrintState(arr, puzzle_size);
     }
-
-    // store Initial State as root node
-    if (verbose) {
-        printf("Storing Initial state as root node\n");
-    }
-    struct Node* root = (struct Node*) malloc(sizeof(struct Node) + sizeof(unsigned) * puzzle_size * puzzle_size); 
-    root->parent = NULL;
-    root->blank_position = blank_position;
-    root->cost = calculateCost(arr, arr_final, puzzle_size);
-    root->level = 0;
-    root->direction = -1;
-    memcpy(root->arr, arr, sizeof arr); 
-    for (int i = 0; i < 4; i++) {
-        root->children[i] = NULL;
-    }
-
-    if (debug) {
-        printf("Root node info:\n");
-        printNodeInfo(root, puzzle_size);
-        printf("\n");
-    }
     
     if (verbose) {
         printf("Attemping to solve puzzle\n\n");
@@ -157,7 +136,7 @@ int main(int argc, char **argv) {
             printf("GPU Solution:\n");
             printf("Not yet implemented\n");
         }
-        CLSolve(root, arr_final, puzzle_size, verbose, debug);
+        CLSolve(arr, arr_final, puzzle_size, blank_position, verbose, debug);
 
     }
     // Solve with CPU if not using OpenCL
@@ -165,9 +144,9 @@ int main(int argc, char **argv) {
         if (verbose) {
             printf("CPU Solution:\n");
         }
-        Solve(root, arr_final, puzzle_size, verbose, debug);
+        Solve(arr, arr_final, puzzle_size, blank_position, verbose, debug);
     }
-    
+
     if (verbose) {
         printf("Done.\n");
     }

@@ -90,7 +90,7 @@ int print_cl_devices() {
     return 0;
 }
 
-void CLSolve(struct Node* root, unsigned* final, unsigned puzzle_size, bool verbose, bool debug) {
+void CLSolve(unsigned* initial_state, unsigned* final, unsigned puzzle_size, unsigned blank_position, bool verbose, bool debug) {
     cl_uint maxComputeUnits;
     size_t maxWorkGroupSize;
     cl_platform_id platform_id = NULL;

@@ -65,7 +65,6 @@ void printNodeInfo(struct Node* node, unsigned puzzle_size) {
     printf("Node address: %p\n", node);
     printf("Parent node: %p\n", node->parent);
     printf("Memory usage: %lu\n", sizeof(*node) + sizeof(unsigned) * puzzle_size * puzzle_size);
-    printf("Memory usage: %lu\n", sizeof(struct Node) + sizeof(unsigned) * puzzle_size * puzzle_size);
 
     printf("Cost: %d\n", node->cost);
     printf("Level: %d\n", node->level);

@@ -12,7 +12,8 @@
 #include "node.h"
 #include "stack.h"
 
-void Solve(struct Node*, unsigned*, unsigned, bool, bool);
+void Solve(unsigned*, unsigned*, unsigned, unsigned, bool, bool);
 void PrintSolution(struct Node*, struct Node*, struct Element*, bool, bool);
+struct Node* MakeRootNode(unsigned*, unsigned*, unsigned, unsigned, bool, bool);
 
 #endif

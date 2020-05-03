@@ -14,6 +14,7 @@
 __kernel void solve(__global unsigned* initial, 
                     __global unsigned* final, 
                     __global unsigned* puzzle_size, 
+                    __global unsigned* blank_position,
                     __global bool* verbose, 
                     __global bool* debug) {
     int depth = 0;
