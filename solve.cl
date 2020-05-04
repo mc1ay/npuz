@@ -30,20 +30,21 @@ struct CLNode {
     unsigned arr[9]; 
 };
 
-__kernel void solve(__global unsigned*, __global unsigned*, __global unsigned*, __global unsigned*, __global struct CLNode*, __global unsigned*, __global unsigned*); 
-__kernel void MakeRootNode(__global struct CLNode*, __global unsigned*, __global unsigned*, __global unsigned*, __global unsigned*);
-__kernel void PrintNodeInfo(__global struct CLNode*, __global unsigned*);
+__kernel void solve(__global unsigned*, __global unsigned*, __global unsigned*, __global unsigned*, __global struct CLNode*); 
+void MakeRootNode(__global struct CLNode*, __global unsigned*, __global unsigned*, __global unsigned*, __global unsigned*);
+void PrintNodeInfo(__global struct CLNode*, int, __global unsigned*);
+bool CheckValidMove(__global unsigned*, unsigned, unsigned);
 
 
 __kernel void solve(__global unsigned* initial, 
                     __global unsigned* final, 
                     __global unsigned* puzzle_size, 
                     __global unsigned* blank_position,
-                    __global struct CLNode* CLNode_array,
-                    __global unsigned* explore_stack,
-                    __global unsigned* delete_stack) {
-    unsigned explore_stack_index = 0;
-    unsigned delete_stack_index = 0;
+                    __global struct CLNode* CLNode_array) {
+    unsigned explore_stack[100];
+    unsigned delete_stack[100];
+    int explore_stack_index = 0;
+    int delete_stack_index = 0;
     printf("---------------------------\n");
     printf("| Inside kernel           |\n");
     printf("---------------------------\n");
@@ -53,12 +54,27 @@ __kernel void solve(__global unsigned* initial,
     }
     printf("\n");
     int depth = 0;
-    int depth_limit = 100;
+    int depth_limit = 1;
     MakeRootNode(CLNode_array, initial, final, puzzle_size, blank_position);
     explore_stack[explore_stack_index] = 0;
+
+    while (depth <= depth_limit) {
+        printf("Using depth: %d\n", depth);
+        explore_stack_index = 0;
+        delete_stack_index = 0;
+        // Do until stack is empty
+        while (explore_stack_index != -1) {
+            // Check for valid moves
+            for (int i = 0; i < 4; i++) {
+                printf("Direction %d returns %d\n", i, CheckValidMove(puzzle_size, CLNode_array[0].blank_position, i));
+            }
+            explore_stack_index--;
+        }
+        depth++;
+    }
 }
 
-__kernel void MakeRootNode(
+void MakeRootNode(
                             __global struct CLNode* CLNode_array,
                             __global unsigned* arr,
                             __global unsigned* arr_final,
@@ -84,11 +100,11 @@ __kernel void MakeRootNode(
     }
 
     printf("Root node info:\n");
-    PrintNodeInfo(CLNode_array, puzzle_size);
+    PrintNodeInfo(CLNode_array, 0, puzzle_size);
     printf("\n");
 }
 
-__kernel void PrintNodeInfo(__global struct CLNode* CLNode_array, __global unsigned* puzzle_size) {
+void PrintNodeInfo(__global struct CLNode* CLNode_array, int index, __global unsigned* puzzle_size) {
     printf("Node address: %p\n", CLNode_array[0]);
     printf("Parent node: %p\n", CLNode_array[0].parent);
     printf("Memory usage: %lu\n", sizeof(CLNode_array[0]));
@@ -107,4 +123,89 @@ __kernel void PrintNodeInfo(__global struct CLNode* CLNode_array, __global unsig
     printf("\n");
 }
 
+bool CheckValidMove(__global unsigned* puzzle_size, unsigned blank_position, unsigned direction) {
+bool valid;
+    // Top-left corner
+    if (blank_position == 0) {
+        if (direction == 1 || direction == 3) {
+            valid = true;
+        }
+        else {
+            valid = false;
+        }
+    }
+    // Top-right corner
+    else if (blank_position == (*puzzle_size - 1)) {
+        if (direction == 1 || direction == 2) {
+            valid = true;
+        }
+        else {
+            valid = false;
+        }
+    }
+    // Bottom-left corner
+    else if (blank_position == (*puzzle_size * *puzzle_size - *puzzle_size)) {
+        if (direction == 0 || direction == 3) {
+            valid = true;
+        }
+        else {
+            valid = false;
+        }
+    }
+    // Bottom-right corner
+    else if (blank_position == (*puzzle_size * *puzzle_size - 1)) {
+        if (direction == 0 || direction == 2) {
+            valid = true;
+        }
+        else {
+            valid = false;
+        }
+    }
+    // Top row
+    else if (blank_position < *puzzle_size) {
+        // all valid except up
+        if (direction == 0) {
+            valid = false;
+        }
+        else {
+            valid = true;
+        }
+    }
+    // Bottom row
+    else if (blank_position > (*puzzle_size * *puzzle_size - *puzzle_size)) {
+        // all valid except down
+        if (direction == 1) {
+            valid = false;
+        }
+        else {
+            valid = true;
+        }
+    }
+    // Left row
+    else if ((blank_position % *puzzle_size) == 0) {
+        // all valid except left
+        if (direction == 2) {
+            valid = false;
+        }
+        else {
+            valid = true;
+        }
+    }
+    // Right row
+    else if ((blank_position % *puzzle_size) == (*puzzle_size - 1)) {
+        // all valid except right
+        if (direction == 3) {
+            valid = false;
+        }
+        else {
+            valid = true;
+        }
+    }
+    // all others should be valid
+    else {
+        valid = true;
+    }
+
+    return valid;
+}
 

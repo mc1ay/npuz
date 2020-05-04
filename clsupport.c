@@ -171,6 +171,7 @@ void CLSolve(unsigned* initial_state,
             NULL, &ret);
     printf("Creating CLNodes buffer: ");
     print_ret_status(ret);
+    /*
     cl_mem explore_stack_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,
             sizeof(unsigned) * num_compute_units * num_pes_per_unit * node_array_size,
             NULL, &ret);
@@ -181,6 +182,7 @@ void CLSolve(unsigned* initial_state,
             NULL, &ret);
     printf("Creating delete stack buffer: ");
     print_ret_status(ret);
+    */
 
     // Copy data to buffers
     printf("Copying variables to buffers\n");
@@ -244,13 +246,15 @@ void CLSolve(unsigned* initial_state,
     ret = clSetKernelArg(kernel, 4, sizeof(cl_mem), (void *)&CLNodes_mem_obj);
     printf("5 - ");
     print_ret_status(ret);
+    /*
     ret = clSetKernelArg(kernel, 5, sizeof(cl_mem), (void *)&explore_stack_mem_obj);
     printf("6 - ");
     print_ret_status(ret);
     ret = clSetKernelArg(kernel, 6, sizeof(cl_mem), (void *)&delete_stack_mem_obj);
     printf("7 - ");
     print_ret_status(ret);
-
+    */
+   
     printf("Executing kernel: \n");
     ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
                 &global_item_size, &local_item_size, 0, NULL, NULL);

@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     bool verbose = false;   
     bool debug = false;
     bool use_opencl = false;
-    unsigned seed = 1;
+    unsigned seed = clock();
     unsigned scramble_size = 0;
 
     // get command line switches
@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 
     // set scramble_size default if switch wasn't used
     if (scramble_size == 0) {
-        scramble_size = 10 * n;
+        scramble_size = 10 * puzzle_size;
     }
 
     // if verbose is set, print out program options/defaults
