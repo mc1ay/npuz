@@ -105,6 +105,10 @@ void CLSolve(unsigned* initial_state,
     cl_uint ret_num_platforms;
     size_t global_item_size = 1;
     size_t local_item_size = 1;
+    unsigned num_compute_units = 1;
+    unsigned num_pes_per_unit = 1;
+    // This needs to allow for at least (2 * dimensions * depth) number of nodes
+    unsigned node_array_size = 100;
     
     // Get platform and device information
     printf("Getting platform and device information: ");
@@ -148,12 +152,35 @@ void CLSolve(unsigned* initial_state,
     // Create memory buffers
     cl_mem initial_state_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
             sizeof(unsigned) * puzzle_size * puzzle_size , NULL, &ret);
+    printf("Creating initial state buffer: ");
+    print_ret_status(ret);
     cl_mem final_state_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
             sizeof(unsigned) * puzzle_size * puzzle_size , NULL, &ret);
-    cl_mem puzzle_size_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE, 
+    printf("Creating final state buffer: ");
+    print_ret_status(ret);
+    cl_mem puzzle_size_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
             sizeof(unsigned), NULL, &ret);
+    printf("Creating puzzle size buffer: ");
+    print_ret_status(ret);
     cl_mem blank_position_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE, 
             sizeof(unsigned), NULL, &ret);
+    printf("Creating blank position buffer: ");
+    print_ret_status(ret);
+    cl_mem CLNodes_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,
+            sizeof(struct CLNode) * num_compute_units * num_pes_per_unit * node_array_size,
+            NULL, &ret);
+    printf("Creating CLNodes buffer: ");
+    print_ret_status(ret);
+    cl_mem explore_stack_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,
+            sizeof(unsigned) * num_compute_units * num_pes_per_unit * node_array_size,
+            NULL, &ret);
+    printf("Creating explore stack buffer: ");
+    print_ret_status(ret);
+    cl_mem delete_stack_mem_obj = clCreateBuffer(context, CL_MEM_READ_WRITE,
+            sizeof(unsigned) * num_compute_units * num_pes_per_unit * node_array_size,
+            NULL, &ret);
+    printf("Creating delete stack buffer: ");
+    print_ret_status(ret);
 
     // Copy data to buffers
     printf("Copying variables to buffers\n");
@@ -213,6 +240,15 @@ void CLSolve(unsigned* initial_state,
     print_ret_status(ret);
     ret = clSetKernelArg(kernel, 3, sizeof(cl_mem), (void *)&blank_position_mem_obj);
     printf("4 - ");
+    print_ret_status(ret);
+    ret = clSetKernelArg(kernel, 4, sizeof(cl_mem), (void *)&CLNodes_mem_obj);
+    printf("5 - ");
+    print_ret_status(ret);
+    ret = clSetKernelArg(kernel, 5, sizeof(cl_mem), (void *)&explore_stack_mem_obj);
+    printf("6 - ");
+    print_ret_status(ret);
+    ret = clSetKernelArg(kernel, 6, sizeof(cl_mem), (void *)&delete_stack_mem_obj);
+    printf("7 - ");
     print_ret_status(ret);
 
     printf("Executing kernel: \n");
